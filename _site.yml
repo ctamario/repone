@@ -1,0 +1,9 @@
+name: "my-website"
+output_dir: "docs"
+navbar:
+  title: "Working with hydrographr"
+  left:
+    - text: "Home"
+      href: index.html
+    - text: "Other stuff"
+      href: otherstuff.html
