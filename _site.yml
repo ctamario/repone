@@ -1,9 +1,9 @@
 name: "my-website"
 output_dir: "docs"
 navbar:
-  title: "Working with hydrographr"
+  title: "AoC"
   left:
     - text: "Home"
       href: index.html
-    - text: "Other stuff"
-      href: otherstuff.html
+    - text: "Day 1"
+      href: day1.html

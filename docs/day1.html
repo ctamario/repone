@@ -11,7 +11,7 @@
 
 
 
-<title>About This Website</title>
+<title>Day 1</title>
 
 <script src="site_libs/header-attrs-2.25/header-attrs.js"></script>
 <script src="site_libs/jquery-3.6.0/jquery-3.6.0.min.js"></script>
@@ -238,7 +238,7 @@ $(document).ready(function () {
         <span class="icon-bar"></span>
         <span class="icon-bar"></span>
       </button>
-      <a class="navbar-brand" href="index.html">Working with hydrographr</a>
+      <a class="navbar-brand" href="index.html">AoC</a>
     </div>
     <div id="navbar" class="navbar-collapse collapse">
       <ul class="nav navbar-nav">
@@ -246,7 +246,7 @@ $(document).ready(function () {
   <a href="index.html">Home</a>
 </li>
 <li>
-  <a href="otherstuff.html">Other stuff</a>
+  <a href="day1.html">Day 1</a>
 </li>
       </ul>
       <ul class="nav navbar-nav navbar-right">
@@ -260,12 +260,96 @@ $(document).ready(function () {
 
 
 
-<h1 class="title toc-ignore">About This Website</h1>
+<h1 class="title toc-ignore">Day 1</h1>
 
 </div>
 
 
-<p>More about this website.</p>
+<div id="part-i" class="section level2">
+<h2>Part I</h2>
+<pre class="r"><code>df &lt;- read.table(&quot;day1/input.txt&quot;)
+
+head(df)</code></pre>
+<pre><code>##                      V1
+## 1 nine92jnhgqzctpgbcbpz
+## 2     sevensddvc73three
+## 3         9986fmfqhdmq8
+## 4        7onexmxbzllfqb
+## 5                six777
+## 6        1zbngsixxrfrpr</code></pre>
+<pre class="r"><code>df$V2 &lt;- gsub(&quot;\\D&quot;, &quot;&quot;, df$V1) # replace all non-numbers with nothing.
+
+head(df)</code></pre>
+<pre><code>##                      V1    V2
+## 1 nine92jnhgqzctpgbcbpz    92
+## 2     sevensddvc73three    73
+## 3         9986fmfqhdmq8 99868
+## 4        7onexmxbzllfqb     7
+## 5                six777   777
+## 6        1zbngsixxrfrpr     1</code></pre>
+<pre class="r"><code>df$V3 &lt;- paste0(substr(df$V2, 1, 1),substr(df$V2, nchar(df$V2), nchar(df$V2))) #extract the first and last number from each string and put them together.
+
+head(df)</code></pre>
+<pre><code>##                      V1    V2 V3
+## 1 nine92jnhgqzctpgbcbpz    92 92
+## 2     sevensddvc73three    73 73
+## 3         9986fmfqhdmq8 99868 98
+## 4        7onexmxbzllfqb     7 77
+## 5                six777   777 77
+## 6        1zbngsixxrfrpr     1 11</code></pre>
+<pre class="r"><code>part1 &lt;- sum(as.numeric(df$V3)) #sum them all up.
+
+part1</code></pre>
+<pre><code>## [1] 54601</code></pre>
+</div>
+<div id="part-ii" class="section level2">
+<h2>Part II</h2>
+<pre class="r"><code>numbers &lt;- c(&quot;one&quot;, &quot;two&quot;, &quot;three&quot;, &quot;four&quot;, &quot;five&quot;, &quot;six&quot;, &quot;seven&quot;, &quot;eight&quot;, &quot;nine&quot;)
+
+df$V4 &lt;- df$V1
+
+library(pacman)
+p_load(stringr) #for function str_replace_all.
+
+#They were a bit tricky and could have strings like &quot;nineight&quot;, which would translate to 98, but if the &quot;eight&quot; was replaced with an 8 then &quot;nin&quot; would get lost in translation. To avoid this problem, I replaced all text-numbers with {textnumber}{number}{textnumber}. &quot;nineight&quot; would therefore become nine9nineight8eight.
+
+for(i in 1:9){
+  df$V4 &lt;- str_replace_all(df$V4, numbers[i], paste0(numbers[i],as.character(i),numbers[i]))
+}
+
+head(df)</code></pre>
+<pre><code>##                      V1    V2 V3                            V4
+## 1 nine92jnhgqzctpgbcbpz    92 92    nine9nine92jnhgqzctpgbcbpz
+## 2     sevensddvc73three    73 73 seven7sevensddvc73three3three
+## 3         9986fmfqhdmq8 99868 98                 9986fmfqhdmq8
+## 4        7onexmxbzllfqb     7 77            7one1onexmxbzllfqb
+## 5                six777   777 77                    six6six777
+## 6        1zbngsixxrfrpr     1 11            1zbngsix6sixxrfrpr</code></pre>
+<pre class="r"><code>df$V5 &lt;- gsub(&quot;\\D&quot;, &quot;&quot;, df$V4) #Then the same as in part I.
+
+head(df)</code></pre>
+<pre><code>##                      V1    V2 V3                            V4    V5
+## 1 nine92jnhgqzctpgbcbpz    92 92    nine9nine92jnhgqzctpgbcbpz   992
+## 2     sevensddvc73three    73 73 seven7sevensddvc73three3three  7733
+## 3         9986fmfqhdmq8 99868 98                 9986fmfqhdmq8 99868
+## 4        7onexmxbzllfqb     7 77            7one1onexmxbzllfqb    71
+## 5                six777   777 77                    six6six777  6777
+## 6        1zbngsixxrfrpr     1 11            1zbngsix6sixxrfrpr    16</code></pre>
+<pre class="r"><code>df$V6 &lt;- paste0(substr(df$V5, 1, 1),substr(df$V5, nchar(df$V5), nchar(df$V5))) #Same as in part I.
+
+head(df)</code></pre>
+<pre><code>##                      V1    V2 V3                            V4    V5 V6
+## 1 nine92jnhgqzctpgbcbpz    92 92    nine9nine92jnhgqzctpgbcbpz   992 92
+## 2     sevensddvc73three    73 73 seven7sevensddvc73three3three  7733 73
+## 3         9986fmfqhdmq8 99868 98                 9986fmfqhdmq8 99868 98
+## 4        7onexmxbzllfqb     7 77            7one1onexmxbzllfqb    71 71
+## 5                six777   777 77                    six6six777  6777 67
+## 6        1zbngsixxrfrpr     1 11            1zbngsix6sixxrfrpr    16 16</code></pre>
+<pre class="r"><code>part2 &lt;- sum(as.numeric(df$V6))
+
+part2</code></pre>
+<pre><code>## [1] 54078</code></pre>
+</div>
 
 
 

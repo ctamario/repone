@@ -1,0 +1,55 @@
+---
+title: "Day 1"
+---
+
+## Part I
+```{r Part I}
+
+df <- read.table("day1/input.txt")
+
+head(df)
+
+df$V2 <- gsub("\\D", "", df$V1) # replace all non-numbers with nothing.
+
+head(df)
+
+df$V3 <- paste0(substr(df$V2, 1, 1),substr(df$V2, nchar(df$V2), nchar(df$V2))) #extract the first and last number from each string and put them together.
+
+head(df)
+
+part1 <- sum(as.numeric(df$V3)) #sum them all up.
+
+part1
+
+```
+## Part II
+```{r Part II}
+numbers <- c("one", "two", "three", "four", "five", "six", "seven", "eight", "nine")
+
+df$V4 <- df$V1
+
+library(pacman)
+p_load(stringr) #for function str_replace_all.
+
+#They were a bit tricky and could have strings like "nineight", which would translate to 98, but if the "eight" was replaced with an 8 then "nin" would get lost in translation. To avoid this problem, I replaced all text-numbers with {textnumber}{number}{textnumber}. "nineight" would therefore become nine9nineight8eight.
+
+for(i in 1:9){
+  df$V4 <- str_replace_all(df$V4, numbers[i], paste0(numbers[i],as.character(i),numbers[i]))
+}
+
+head(df)
+
+df$V5 <- gsub("\\D", "", df$V4) #Then the same as in part I.
+
+head(df)
+
+df$V6 <- paste0(substr(df$V5, 1, 1),substr(df$V5, nchar(df$V5), nchar(df$V5))) #Same as in part I.
+
+head(df)
+
+part2 <- sum(as.numeric(df$V6))
+
+part2
+
+```
+
