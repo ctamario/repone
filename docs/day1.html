@@ -311,7 +311,7 @@ df$V4 &lt;- df$V1
 library(pacman)
 p_load(stringr) #for function str_replace_all.
 
-#They were a bit tricky and could have strings like &quot;nineight&quot;, which would translate to 98, but if the &quot;eight&quot; was replaced with an 8 then &quot;nin&quot; would get lost in translation. To avoid this problem, I replaced all text-numbers with {textnumber}{number}{textnumber}. &quot;nineight&quot; would therefore become nine9nineight8eight.
+#They were a bit tricky and could have strings like &quot;nineight&quot;, which would translate to 98, but if the &quot;eight&quot; was replaced with an 8 then &quot;nin&quot; would get lost in translation. To avoid this problem, I replaced all textnumbers with {textnumber}{number}{textnumber}. &quot;nineight&quot; would therefore become nine9nineight8eight, which correctly gives 98, despite overlapping textnumbers.
 
 for(i in 1:9){
   df$V4 &lt;- str_replace_all(df$V4, numbers[i], paste0(numbers[i],as.character(i),numbers[i]))
