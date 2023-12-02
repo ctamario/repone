@@ -1,0 +1,63 @@
+---
+title: "Day 2"
+---
+
+
+## Part I
+
+```{r PartI}
+df <- read.table("day2/input.txt", sep="H")$V1
+
+head(df)
+
+library(stringr)
+
+
+get_sets <- function(in_data, game_number){
+  split1 <- str_split(df, ": ")[[game_number]][2]
+  split2 <- unlist(str_split(split1, "; "))
+  hej <- data.frame("green"=NA, "blue"=NA, "red"=NA)
+  for(i in 1:length(split2)){
+      hej[i,1] <- as.numeric(str_extract(str_extract(split2[i], "\\d+ green"),"\\d+"))
+      hej[i,2] <- as.numeric(str_extract(str_extract(split2[i], "\\d+ blue"),"\\d+"))
+      hej[i,3] <- as.numeric(str_extract(str_extract(split2[i], "\\d+ red"),"\\d+"))
+  }
+  hej[is.na(hej)] <- 0
+  return(hej)
+}
+
+
+first_game <- get_sets(df, 1)
+first_game
+
+######## green, blue, red
+rules <- c(13, 14, 12)
+
+test_rule <- function(in_game, rules){
+  max_green <- max(in_game$green, na.rm = T)
+  max_blue <- max(in_game$blue, na.rm = T)
+  max_red  <- max(in_game$red, na.rm = T)
+  outcome_possible <- c(max_green <= rules[1], max_blue <= rules[2], max_red <= rules[3])
+  if(FALSE %in% outcome_possible){
+    return("not possible")
+  } else {
+    return("possible")
+  }
+}
+
+result_vector <- rep(NA,100)
+for(i in 1:100){
+  game <- get_sets(df, i)
+  result_vector[i] <- if(test_rule(game, rules)=="possible"){paste0(i)}else{NA}
+}
+
+sum(as.numeric(result_vector), na.rm=T) # Damn, it's correct...
+
+```
+
+## Part II
+
+No battery, and no power cable... To be continued.
+
+
+
