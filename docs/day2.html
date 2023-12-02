@@ -319,17 +319,32 @@ test_rule &lt;- function(in_game, rules){
 }
 
 result_vector &lt;- rep(NA,100)
+
 for(i in 1:100){
   game &lt;- get_sets(df, i)
-  result_vector[i] &lt;- if(test_rule(game, rules)==&quot;possible&quot;){paste0(i)}else{NA}
+  result_vector[i] &lt;- if(test_rule(game, rules) == &quot;possible&quot;) {paste0(i)} else {NA}
 }
 
-sum(as.numeric(result_vector), na.rm=T) # Damn, it&#39;s correct...</code></pre>
+sum(as.numeric(result_vector), na.rm=T) </code></pre>
 <pre><code>## [1] 2239</code></pre>
 </div>
 <div id="part-ii" class="section level2">
 <h2>Part II</h2>
-<p>No battery, and no power cable… To be continued.</p>
+<pre class="r"><code>get_power &lt;- function(in_game){
+  max_green &lt;- max(in_game$green, na.rm = T)
+  max_blue &lt;- max(in_game$blue, na.rm = T)
+  max_red  &lt;- max(in_game$red, na.rm = T)
+  return(max_green*max_blue*max_red)
+}
+
+result_vector &lt;- rep(NA,100)
+
+for(i in 1:100){
+  result_vector[i] &lt;- get_power(get_sets(df, i))
+}
+
+sum(result_vector) </code></pre>
+<pre><code>## [1] 83435</code></pre>
 </div>
 
 

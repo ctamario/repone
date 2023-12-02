@@ -46,18 +46,36 @@ test_rule <- function(in_game, rules){
 }
 
 result_vector <- rep(NA,100)
+
 for(i in 1:100){
   game <- get_sets(df, i)
-  result_vector[i] <- if(test_rule(game, rules)=="possible"){paste0(i)}else{NA}
+  result_vector[i] <- if(test_rule(game, rules) == "possible") {paste0(i)} else {NA}
 }
 
-sum(as.numeric(result_vector), na.rm=T) # Damn, it's correct...
+sum(as.numeric(result_vector), na.rm=T) 
 
 ```
 
 ## Part II
 
-No battery, and no power cable... To be continued.
+```{r part2}
 
+get_power <- function(in_game){
+  max_green <- max(in_game$green, na.rm = T)
+  max_blue <- max(in_game$blue, na.rm = T)
+  max_red  <- max(in_game$red, na.rm = T)
+  return(max_green*max_blue*max_red)
+}
+
+result_vector <- rep(NA,100)
+
+for(i in 1:100){
+  result_vector[i] <- get_power(get_sets(df, i))
+}
+
+sum(result_vector) 
+
+
+```
 
 
