@@ -1,0 +1,53 @@
+---
+title: "Day 3"
+---
+
+## Part I
+
+```{r}
+library(pacman)
+p_load(stringr, tidyr, dplyr, sets)
+
+df <- readLines("day4/input.txt")
+
+hej <- str_split(df, "\\||\\:")
+
+winning_numbers <- as.set(str_extract_all(hej[[1]], "\\d+")[[2]])
+my_numbers <- as.set(str_extract_all(hej[[1]], "\\d+")[[3]])
+
+hand <- set_intersection(my_numbers, winning_numbers)
+
+hand <- data.frame(game=rep(0,length(df)), winning=0)
+
+for(i in 1:length(df)){
+winning_numbers <- as.set(str_extract_all(hej[[i]], "\\d+")[[2]])
+my_numbers <- as.set(str_extract_all(hej[[i]], "\\d+")[[3]])
+hand$game[i] <- i
+hand$winning[i] <- length(set_intersection(my_numbers, winning_numbers))
+}
+
+hand <- hand %>% filter(winning > 0) %>% mutate(score=2^(winning-1))
+
+sum(hand$score)
+
+```
+
+## Part II
+
+```{r}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+```
+
