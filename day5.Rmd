@@ -1,0 +1,28 @@
+---
+title: "Day 5"
+---
+
+## Part I
+
+
+
+
+```{r}
+
+library(pacman)
+p_load(stringr, dplyr)
+
+df <- readLines("day5/input_test.txt")
+
+
+
+
+df2 <- na_if(df, "")
+
+str_match_all(df2, "NA")
+
+str_flatten(df)
+
+
+```
+
