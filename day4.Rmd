@@ -6,7 +6,8 @@ title: "Day 3"
 
 ```{r}
 library(pacman)
-p_load(stringr, tidyr, dplyr, sets)
+p_load(stringr, dplyr, sets)
+
 
 df <- readLines("day4/input.txt")
 
@@ -17,7 +18,7 @@ my_numbers <- as.set(str_extract_all(hej[[1]], "\\d+")[[3]])
 
 hand <- set_intersection(my_numbers, winning_numbers)
 
-hand <- data.frame(game=rep(0,length(df)), winning=0)
+hand <- tibble(game=rep(0,length(df)), winning=0)
 
 for(i in 1:length(df)){
 winning_numbers <- as.set(str_extract_all(hej[[i]], "\\d+")[[2]])
@@ -26,7 +27,9 @@ hand$game[i] <- i
 hand$winning[i] <- length(set_intersection(my_numbers, winning_numbers))
 }
 
-hand <- hand %>% filter(winning > 0) %>% mutate(score=2^(winning-1))
+unloadNamespace("sets")
+
+hand <- hand %>% dplyr::filter(winning > 0) %>% dplyr::mutate(score=2^(winning-1))
 
 sum(hand$score)
 
@@ -36,16 +39,39 @@ sum(hand$score)
 
 ```{r}
 
+library(pacman)
+p_load(stringr, dplyr, sets)
+
+df <- readLines("day4/input.txt")
+
+hej <- str_split(df, "\\||\\:")
+
+winning_numbers <- as.set(str_extract_all(hej[[1]], "\\d+")[[2]])
+my_numbers <- as.set(str_extract_all(hej[[1]], "\\d+")[[3]])
+
+rounds <- data.frame(card = 1:length(df), n_winning_numbers=0, n_cards=1)
+
+play_game <- function(in_game, card_no){
+  in_game$n_winning_numbers[card_no] <- length(set_intersection(as.set(str_extract_all(hej[[card_no]], "\\d+")[[3]]),
+                                                                as.set(str_extract_all(hej[[card_no]], "\\d+")[[2]])))
+  if(in_game$n_winning_numbers[card_no] > 0){
+      in_game$n_cards[(card_no+1):(card_no+in_game$n_winning_numbers[card_no])] <- in_game$n_cards[(card_no+1):(card_no+in_game$n_winning_numbers[card_no])]+
+    in_game$n_cards[card_no]
+  }
+
+  return(in_game)
+}
+
+card_no <- 1
+
+for(card_no in 1:length(df)){
+  rounds <- play_game(in_game = rounds, card_no=card_no)
+}
 
 
+head(rounds, n=30)
 
-
-
-
-
-
-
-
+sum(rounds$n_cards)
 
 
 

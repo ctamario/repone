@@ -11,3 +11,5 @@ navbar:
       href: day2.html
     - text: "Day 3"
       href: day3.html
+    - text: "Day 4"
+      href: day4.html

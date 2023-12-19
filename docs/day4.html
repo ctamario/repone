@@ -277,124 +277,100 @@ $(document).ready(function () {
 <div id="part-i" class="section level2">
 <h2>Part I</h2>
 <pre class="r"><code>library(pacman)
-p_load(stringr, dplyr)
+p_load(stringr, dplyr, sets)
 
-df &lt;- readLines(&quot;day3/input.txt&quot;)
 
-pad &lt;- function(in_data){
-  padded_rows &lt;- c(str_c(rep(&quot;.&quot;,nchar(in_data[1])),collapse=&quot;&quot;), 
-              in_data, 
-              str_c(rep(&quot;.&quot;,nchar(in_data[1])),collapse=&quot;&quot;))
-  
-  padded_columns &lt;- str_c(&quot;.&quot;,padded_rows,&quot;.&quot;)
-  
-  return(padded_columns)
+df &lt;- readLines(&quot;day4/input.txt&quot;)
+
+hej &lt;- str_split(df, &quot;\\||\\:&quot;)
+
+winning_numbers &lt;- as.set(str_extract_all(hej[[1]], &quot;\\d+&quot;)[[2]])
+my_numbers &lt;- as.set(str_extract_all(hej[[1]], &quot;\\d+&quot;)[[3]])
+
+hand &lt;- set_intersection(my_numbers, winning_numbers)
+
+hand &lt;- tibble(game=rep(0,length(df)), winning=0)
+
+for(i in 1:length(df)){
+winning_numbers &lt;- as.set(str_extract_all(hej[[i]], &quot;\\d+&quot;)[[2]])
+my_numbers &lt;- as.set(str_extract_all(hej[[i]], &quot;\\d+&quot;)[[3]])
+hand$game[i] &lt;- i
+hand$winning[i] &lt;- length(set_intersection(my_numbers, winning_numbers))
 }
 
-df &lt;- pad(df)
+unloadNamespace(&quot;sets&quot;)
 
-#all_signs &lt;- names(table(df_mat))
-#specials &lt;- str_c(all_signs, collapse=&quot;|\\&quot;)
+hand &lt;- hand %&gt;% dplyr::filter(winning &gt; 0) %&gt;% dplyr::mutate(score=2^(winning-1))
 
-specials &lt;- &quot;\\-|\\#|\\$|\\%|\\&amp;|\\*|\\/|\\@|\\+|\\=&quot;
-
-df &lt;- str_replace_all(df, specials, &quot;#&quot;)
-
-df_in &lt;- df
-
-sum &lt;- 0
-
-for(row_search in 1:length(df_in)){
-hm &lt;- unlist(str_extract_all(df_in[row_search], &quot;\\d+&quot;))
-  
-   #hm is 2 places long, so loop the below for each item in hm. 
-    for(i in seq_along(hm)){
-    loc &lt;- str_locate(df_in[row_search], hm[i])
-    
-    line1 &lt;- substr(df_in[row_search-1],(loc[1]-1), (loc[2]+1))
-    line2 &lt;- substr(df_in[row_search],(loc[1]-1), (loc[2]+1))
-    line3 &lt;- substr(df_in[row_search+1],(loc[1]-1), (loc[2]+1))
-    
-    search_around &lt;- str_c(line1, line2, line3) 
-    
-    if(str_detect(search_around, &quot;\\#&quot;) == TRUE){
-      sum &lt;- sum + as.numeric(hm[i])
-    } else {
-      sum &lt;- sum
-    }
-    df_in[row_search] &lt;- str_replace(df_in[row_search], hm[i], strrep(&quot;.&quot;,times=nchar(hm[i])))
-  }
-}
-
-sum # correct answer</code></pre>
-<pre><code>## [1] 550934</code></pre>
+sum(hand$score)</code></pre>
+<pre><code>## [1] 15268</code></pre>
 </div>
 <div id="part-ii" class="section level2">
 <h2>Part II</h2>
-<pre class="r"><code>df &lt;- readLines(&quot;day3/input.txt&quot;)
+<pre class="r"><code>library(pacman)
+p_load(stringr, dplyr, sets)
 
-pad &lt;- function(in_data){
-  padded_rows &lt;- c(str_c(rep(&quot;.&quot;,nchar(in_data[1])),collapse=&quot;&quot;), 
-              in_data, 
-              str_c(rep(&quot;.&quot;,nchar(in_data[1])),collapse=&quot;&quot;))
-  
-  padded_columns &lt;- str_c(&quot;.&quot;,padded_rows,&quot;.&quot;)
-  
-  return(padded_columns)
-}
+df &lt;- readLines(&quot;day4/input.txt&quot;)
 
-df &lt;- pad(df)
+hej &lt;- str_split(df, &quot;\\||\\:&quot;)
 
-df_in &lt;- df
+winning_numbers &lt;- as.set(str_extract_all(hej[[1]], &quot;\\d+&quot;)[[2]])
+my_numbers &lt;- as.set(str_extract_all(hej[[1]], &quot;\\d+&quot;)[[3]])
 
-sum &lt;- 0
+rounds &lt;- data.frame(card = 1:length(df), n_winning_numbers=0, n_cards=1)
 
-df_new &lt;- data.frame(value=0, star_row=NA, star_col=NA)
-df_fun &lt;- data.frame(value=0, star_row=NA, star_col=NA)
-
-for(row_search in 1:142){
-hm &lt;- unlist(str_extract_all(df_in[row_search], &quot;\\d+&quot;))
-  if(length(hm) == 0) next
-   #hm is 2 places long, so loop the below for each item in hm. 
-    for(i in 1:length(hm)){
-    loc &lt;- str_locate(df_in[row_search], hm[i])
-    
-    line1 &lt;- substr(df_in[row_search-1],(loc[1]-1), (loc[2]+1))
-    line2 &lt;- substr(df_in[row_search],(loc[1]-1), (loc[2]+1))
-    line3 &lt;- substr(df_in[row_search+1],(loc[1]-1), (loc[2]+1))
-    
-    search_around &lt;- str_c(line1, line2, line3) 
-  
-    if(str_detect(search_around, &quot;\\*&quot;) == TRUE){
-      if(str_detect(line1, &quot;\\*&quot;) == T){
-        df_fun$star_row &lt;- row_search-1
-      } else if (str_detect(line2, &quot;\\*&quot;) == T){
-        df_fun$star_row &lt;- row_search
-      } else if (str_detect(line3, &quot;\\*&quot;) == T){
-        df_fun$star_row &lt;- row_search+1
-      }
-      
-      col_step &lt;- c(loc[1]+str_locate(line1, &quot;\\*&quot;)[1]-2,
-      loc[1]+str_locate(line2, &quot;\\*&quot;)[1]-2,
-      loc[1]+str_locate(line3, &quot;\\*&quot;)[1]-2)
-      
-
-      df_fun$star_col &lt;- col_step[which(!is.na(col_step))]
-      
-      df_fun$value &lt;- as.numeric(hm[i])
-      df_new &lt;- rbind(df_new, df_fun)
-    } else {
-      #sum &lt;- sum
-    }
-    df_in[row_search] &lt;- str_replace(df_in[row_search], hm[i], strrep(&quot;.&quot;,times=nchar(hm[i])))
+play_game &lt;- function(in_game, card_no){
+  in_game$n_winning_numbers[card_no] &lt;- length(set_intersection(as.set(str_extract_all(hej[[card_no]], &quot;\\d+&quot;)[[3]]),
+                                                                as.set(str_extract_all(hej[[card_no]], &quot;\\d+&quot;)[[2]])))
+  if(in_game$n_winning_numbers[card_no] &gt; 0){
+      in_game$n_cards[(card_no+1):(card_no+in_game$n_winning_numbers[card_no])] &lt;- in_game$n_cards[(card_no+1):(card_no+in_game$n_winning_numbers[card_no])]+
+    in_game$n_cards[card_no]
   }
+
+  return(in_game)
 }
 
-summing_up &lt;- df_new %&gt;% group_by(star_row, star_col) %&gt;% summarise(product = prod(value), n=n()) %&gt;% filter(n == 2)</code></pre>
-<pre><code>## `summarise()` has grouped output by &#39;star_row&#39;. You
-## can override using the `.groups` argument.</code></pre>
-<pre class="r"><code>sum(summing_up$product) # correct answer, omfg</code></pre>
-<pre><code>## [1] 81997870</code></pre>
+card_no &lt;- 1
+
+for(card_no in 1:length(df)){
+  rounds &lt;- play_game(in_game = rounds, card_no=card_no)
+}
+
+
+head(rounds, n=30)</code></pre>
+<pre><code>##    card n_winning_numbers n_cards
+## 1     1                10       1
+## 2     2                 4       2
+## 3     3                 2       4
+## 4     4                 8       8
+## 5     5                 8      16
+## 6     6                 2      28
+## 7     7                 5      54
+## 8     8                 3     108
+## 9     9                 7     188
+## 10   10                 1     376
+## 11   11                 1     752
+## 12   12                 1    1019
+## 13   13                 2    1224
+## 14   14                 0    1413
+## 15   15                 0    1413
+## 16   16                 0     189
+## 17   17                 4       1
+## 18   18                 9       2
+## 19   19                 6       4
+## 20   20                10       8
+## 21   21                 5      16
+## 22   22                 5      31
+## 23   23                 2      62
+## 24   24                 3     124
+## 25   25                 3     248
+## 26   26                 6     430
+## 27   27                 1     844
+## 28   28                 2    1531
+## 29   29                 0    1970
+## 30   30                 3    1970</code></pre>
+<pre class="r"><code>sum(rounds$n_cards)</code></pre>
+<pre><code>## [1] 6283755</code></pre>
 </div>
 
 
